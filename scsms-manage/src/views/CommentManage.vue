@@ -31,11 +31,16 @@ import {
 } from "vue";
 import { get } from "../apis";
 import { formatTime } from "../util/util";
-import { getComment } from "../apis/comment";
+import { getComment, deleteComment } from "../apis/comment";
 import { CommentItem } from "../types/types";
 
 const columns = ({ handleReject }: any): any => {
   return [
+    {
+      title: "Id",
+      key: "id",
+      align: "center",
+    },
     {
       title: "Business_name",
       key: "business_name",
@@ -66,7 +71,7 @@ const columns = ({ handleReject }: any): any => {
       key: "createTime",
       align: "center",
     },
-    /* {
+    {
       title: "Action",
       key: "action",
       align: "center",
@@ -81,7 +86,7 @@ const columns = ({ handleReject }: any): any => {
           { default: () => "Delete" }
         );
       },
-    }, */
+    },
   ];
 };
 
@@ -112,6 +117,7 @@ export default defineComponent({
         console.log(data);
         data.list.map((item: any) => {
           const commentItem: any = {};
+          commentItem.id = item._id;
           commentItem.content = item.content;
           commentItem.username = item.user_name;
           commentItem.score = item.fraction_star + "星";
@@ -126,22 +132,6 @@ export default defineComponent({
         //paginationReactive.page = data.data.pageNum;
         //paginationReactive.pageCount = data.data.pages;
         loadingRef.value = false;
-      });
-    };
-
-    const getNewOrderFun = (page: number, size: number): void => {
-      getOrder({ page, size }).then((data: any) => {
-        data.data.list.map((item: any) => {
-          const orderItem: any = {};
-          orderItem.id = item.id;
-          orderItem.brand = item.car.brand;
-          orderItem.model = item.car.model;
-          orderItem.series = item.car.series;
-          orderItem.structure = item.car.structure;
-          orderItem.fuel = item.car.fuel;
-          orderItem.price = item.car.price;
-          activeArr.value.push(orderItem);
-        });
       });
     };
 
@@ -180,11 +170,12 @@ export default defineComponent({
         }
       });
     };
-    /* const handleReject = (rowData: any): void => {
-      const data = rowData.user_id;
-      auditOrder(data).then((res) => {
+    const handleReject = (rowData: any): void => {
+      const data = rowData.id;
+      deleteComment(data).then((res) => {
         console.log(res);
         if (res.ok == true) {
+          getOrderFun(paginationReactive.page, paginationReactive.pageSize);
           const newArr = dataRef.value.filter((item) => item.user_id != data);
           //console.log(newArr);
           dataRef.value = newArr;
@@ -194,13 +185,13 @@ export default defineComponent({
           message.error(`删除失败`);
         }
       });
-    }; */
+    };
 
     return {
       data: dataRef,
       columns: columns({
         handleAgree,
-        /* handleReject, */
+        handleReject,
       }),
       loading: loadingRef,
       pagination: paginationReactive,

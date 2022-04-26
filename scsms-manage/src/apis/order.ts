@@ -1,4 +1,5 @@
 import { AuditInfo, OrderList } from "../types/types";
+import { Delete } from "./index";
 import { get } from "./index.ts";
 
 export const getOrder = (data: OrderList): Promise<any> => {
@@ -6,5 +7,5 @@ export const getOrder = (data: OrderList): Promise<any> => {
 };
 
 export const auditOrder = (auditInfo: AuditInfo): Promise<any> => {
-  return get("/admin/publish", auditInfo);
+  return Delete("/order/delete", auditInfo);
 };

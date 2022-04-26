@@ -37,6 +37,11 @@ import { AuditInfo, OrderItem, OrderList } from "../types/types";
 const columns = ({ handleReject }: any): any => {
   return [
     {
+      title: "Id",
+      key: "id",
+      align: "center",
+    },
+    {
       title: "user_id",
       key: "user_id",
       align: "center",
@@ -71,7 +76,7 @@ const columns = ({ handleReject }: any): any => {
       key: "createTime",
       align: "center",
     },
-    /* {
+    {
       title: "Action",
       key: "action",
       align: "center",
@@ -86,7 +91,7 @@ const columns = ({ handleReject }: any): any => {
           { default: () => "Delete" }
         );
       },
-    }, */
+    },
   ];
 };
 
@@ -117,6 +122,7 @@ export default defineComponent({
         console.log(data);
         data.list.map((item: any) => {
           const orderItem: any = {};
+          orderItem.id = item._id;
           orderItem.user_id = item.user_oppenid;
           orderItem.username = item.user_name;
           orderItem.message = item.message;
@@ -141,22 +147,6 @@ export default defineComponent({
         //paginationReactive.page = data.data.pageNum;
         //paginationReactive.pageCount = data.data.pages;
         loadingRef.value = false;
-      });
-    };
-
-    const getNewOrderFun = (page: number, size: number): void => {
-      getOrder({ page, size }).then((data: any) => {
-        data.data.list.map((item: any) => {
-          const orderItem: any = {};
-          orderItem.id = item.id;
-          orderItem.brand = item.car.brand;
-          orderItem.model = item.car.model;
-          orderItem.series = item.car.series;
-          orderItem.structure = item.car.structure;
-          orderItem.fuel = item.car.fuel;
-          orderItem.price = item.car.price;
-          activeArr.value.push(orderItem);
-        });
       });
     };
 
@@ -195,11 +185,13 @@ export default defineComponent({
         }
       });
     };
-    /* const handleReject = (rowData: any): void => {
-      const data = rowData.user_id;
+    const handleReject = (rowData: any): void => {
+      const data = rowData.id;
+      console.log(data);
       auditOrder(data).then((res) => {
         console.log(res);
         if (res.ok == true) {
+          getOrderFun(paginationReactive.page, paginationReactive.pageSize);
           const newArr = dataRef.value.filter((item) => item.user_id != data);
           //console.log(newArr);
           dataRef.value = newArr;
@@ -209,13 +201,13 @@ export default defineComponent({
           message.error(`删除失败`);
         }
       });
-    }; */
+    };
 
     return {
       data: dataRef,
       columns: columns({
         handleAgree,
-        /* handleReject, */
+        handleReject,
       }),
       loading: loadingRef,
       pagination: paginationReactive,

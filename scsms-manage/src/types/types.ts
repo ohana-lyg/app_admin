@@ -9,6 +9,7 @@ interface OrderList {
 }
 
 interface OrderItem {
+  id: string;
   user_id: string;
   username: string;
   food: string;
@@ -43,6 +44,7 @@ interface CommentList {
 }
 
 interface CommentItem {
+  id: string;
   content: string;
   username: string;
   score: number;
